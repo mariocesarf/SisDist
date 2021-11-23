@@ -1,21 +1,41 @@
-export const descerializer = (msg) => {
-    let arrayOfMsg = msg.trim().split("");
-    return {
-      op1 : parseInt(arrayOfMsg[0]),
-      operator : arrayOfMsg[1],
-      op2 : parseInt(arrayOfMsg[2])
-    }
-}
+const findOperator = (operation) => {
+  if (operation.includes("+")) return "+";
+  if (operation.includes("-")) return "-";
+  if (operation.includes("*")) return "*";
+  if (operation.includes("/")) return "/";
+};
 
-export const calcular = ( operation ) =>{
-  switch(operation.operator){
+const formatMenssage = (message) => {
+  return message.trim().replace(",", ".").replace(/\s/g, "");
+};
+
+export const descerializer = (msg) => {
+  let formatedMessage = formatMenssage(msg);
+  let operator = findOperator(formatedMessage);
+  let [op1, op2] = formatedMessage.split(operator);
+  return {
+    op1: op1.includes(".") ? parseFloat(op1) : parseInt(op1),
+    operator,
+    op2: op2.includes(".") ? parseFloat(op2) : parseInt(op2),
+  };
+};
+
+export const calcular = (operation) => {
+  let result = 0;
+  switch (operation.operator) {
     case "+":
-      return operation.op1 + operation.op2;
+      result = operation.op1 + operation.op2;
+      break;
     case "-":
-      return operation.op1 - operation.op2;
+      result = operation.op1 - operation.op2;
+      break;
     case "*":
-      return operation.op1 * operation.op2;
+      result = operation.op1 * operation.op2;
+      break;
     case "/":
-      return operation.op1 / operation.op2;
+      result =
+        operation.op2 !== 0 ? operation.op1 / operation.op2 : "MATH ERROR";
+      return result;
   }
-}
+  return result.toFixed(2).toString();
+};
