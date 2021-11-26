@@ -15,7 +15,7 @@ server.on("message", (msg, rinfo) => {
   const operationResult = calcular(descerializer(msg.toString()));
   const bufferedMessage = Buffer.from(operationResult);
 
-  server.send(bufferedMessage, 7070, "0.0.0.0", (err) => {
+  server.send(bufferedMessage, rinfo.port, rinfo.address, (err) => {
     if (err) {
       server.close();
     } else {
@@ -30,4 +30,4 @@ server.on("listening", () => {
   console.log(`server listening ${address.address}:${address.port}`);
 });
 
-server.bind(8080);
+server.bind(6060);
