@@ -1,0 +1,29 @@
+package SensorPackage;
+syntax = "proto3";
+
+
+
+message BroadcastMessage{
+    string Description = 1;
+    required string Command = 2;
+
+}
+
+message IdentifierMessage {
+    string Description = 1;
+    string Name = 2;
+    string SensorType = 3;
+
+
+}
+
+
+
+message SensorMessage {
+    string Description = 1;
+    string Temperature = 2;
+    string Pressure = 3;
+    string Humidity = 4;
+    
+
+}
