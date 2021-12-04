@@ -35,7 +35,15 @@ export const calcular = (operation) => {
     case "/":
       result =
         operation.op2 !== 0 ? operation.op1 / operation.op2 : "MATH ERROR";
-      return result;
+      //return result;
+      break;
   }
+  if(typeof(result)==Number){
   return result.toFixed(2).toString();
+  }else{
+    return result;
+
+  }
+  
+  
 };
