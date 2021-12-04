@@ -2,6 +2,10 @@ package SensorPackage;
 syntax = "proto3";
 
 
+message PatternIdentifierMessage {
+    string Description = 1;
+}
+
 
 message BroadcastMessage{
     string Description = 1;

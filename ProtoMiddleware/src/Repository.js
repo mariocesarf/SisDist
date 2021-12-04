@@ -32,7 +32,10 @@ export const storage = {
     newService(service, socket){
         let {Name, Type} = service
         if(!this.verificar(Name)){
-            this.database.set(Name,{socket, Type});
+            this.database.set(Name,{
+                Socket: socket,
+                Type: Type
+            });
             return true;
         }
         return false;
@@ -42,25 +45,25 @@ export const storage = {
         return JSON.stringify(Array.from(this.database.keys()))
     },
 
-    desligarDispositivo(nome){
-        const socket = this.buscarSocket(nome)
-        socket.write("Se desliga");
-    },
+    // desligarDispositivo(nome){
+    //     const socket = this.buscarSocket(nome)
+    //     socket.write("Se desliga");
+    // },
 
     verificar(service) {
         let {Name, Type} = service
         return this.database.has(Name)
     },
 
-    buscarSocket(Name){
+    buscarDispositivo(Name){
         return this.database.get(Name)
     },
 
-    broadcast(message){
-        this.database.forEach(socket => {
-            socket.write(JSON.stringify({serverMessage: message}))
-        })
-    },
+    // broadcast(message){
+    //     this.database.forEach(socket => {
+    //         socket.write(JSON.stringify({serverMessage: message}))
+    //     })
+    // },
 
     buscarNome(socket){
         this.database.forEach((sock,name) => {

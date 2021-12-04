@@ -10,7 +10,7 @@ const CONNECTION_COMMAND = "$CONECTAR"
 const TYPE = "Sensor"
 const NAME = "Sensor de temperatura"
 
-const udpClient = dgram.createSocket('udp4');
+const udpClient =  dgram.createSocket({ type: 'udp4', reuseAddr: true })
 const tcpClient = new net.Socket()
 
 const RequestRepository = await protobuf.load("Sensor.proto")

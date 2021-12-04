@@ -19,8 +19,6 @@ message IdentifierMessage {
 
 }
 
-
-
 message SensorMessage {
     string Description = 1;
     string Temperature = 2;
@@ -28,4 +26,27 @@ message SensorMessage {
     string Humidity = 4;
     
 
+}
+
+message EditSoundSystemMessage {
+    string Description = 1;
+    string ActualTrack = 2;
+    string Volume = 3;
+}
+
+message FeedbackMessage {
+    string Description = 1;
+    string ActualTrack = 2;
+    string Volume = 3;
+}
+
+
+message EditGateStatusMessage {
+    string Description = 1;
+    string Status = 2;
+}
+
+message GateStatusMessage {
+    string Description = 1;
+    string Status = 2;
 }

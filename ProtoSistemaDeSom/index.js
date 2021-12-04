@@ -1,7 +1,7 @@
 import dgram from 'dgram'
 import net from 'net'
 import protobuf from "protobufjs"
-
+import chalk from 'chalk'
 const PORT = 6024
 let connected = false;
 const MCAST_ADDR = "224.0.0.0";
@@ -16,17 +16,23 @@ let VOLUME = 0;
 let ACTUAL_TRACK = ''
 
 
-const udpClient = dgram.createSocket('udp4');
+const udpClient =  dgram.createSocket({ type: 'udp4', reuseAddr: true })
+udpClient.bind(6024, function () {
+  udpClient.setBroadcast(true);
+  udpClient.setMulticastTTL(1);
+  udpClient.addMembership(MCAST_ADDR);
+})
+
 const tcpClient = new net.Socket()
 
 const RequestRepository = await protobuf.load("Dispositive.proto")
 
 let BroadcastMessageRequestHandler = RequestRepository.lookupType("DispositivePackage.BroadcastMessage");
 let IdentifierMessageRequestHandler = RequestRepository.lookupType("DispositivePackage.IdentifierMessage");
+let PatternIdentifierMessageRequestHandler = RequestRepository.lookupType("DispositivePackage.PatternIdentifierMessage");
 
 let FeedbackMessageFactory = RequestRepository.lookupType("DispositivePackage.FeedbackMessage");
 let EditSoundSystemMessageFactory = RequestRepository.lookupType('DispositivePackage.EditSoundSystemMessage');
-
 
 let IdentifierMessageRequest = IdentifierMessageRequestHandler.create({
   Description: 'IdentifierMessage',
@@ -36,12 +42,6 @@ let IdentifierMessageRequest = IdentifierMessageRequestHandler.create({
 
 let IdentifierMessage = IdentifierMessageRequestHandler.encode(IdentifierMessageRequest).finish()
 
-udpClient.bind(6023, function () {
-  console.log('cone')
-  udpClient.setBroadcast(true);
-  udpClient.setMulticastTTL(1);
-  udpClient.addMembership(MCAST_ADDR);
-})
 
 udpClient.on('listening', () => {
   console.log('Sistema de som iniciado!');
@@ -50,10 +50,7 @@ udpClient.on('listening', () => {
 
 
 udpClient.on('message', (msg, rinfo) => {
-  console.log(msg)
     let { Command } = BroadcastMessageRequestHandler.decode(msg)
-    
-    console.log(Command)
     if(CONNECTION_COMMAND.includes(Command) && !connected)
     {
       console.log(rinfo.address)
@@ -72,5 +69,36 @@ tcpClient.on('connect', () => {
 })
 
 tcpClient.on("data", (data) => {
+
+  var { Description } = PatternIdentifierMessageRequestHandler.decode(data);
+
+  switch (Description) {
+      case 'EditSoundSystemMessage':
+
+        var { ActualTrack, Volume } = EditSoundSystemMessageFactory.decode(data);
+        ACTUAL_TRACK = ActualTrack || '';
+        VOLUME = Volume || 0;
+        console.log(chalk.green(`A musica atual é ${ACTUAL_TRACK} com volume ${VOLUME}`))
+
+        let FeedbackMessageRequest = FeedbackMessageFactory.create({
+          Description: 'FeedbackMessage',
+          ActualTrack: ACTUAL_TRACK,
+          Volume: VOLUME
+            });
+      
+        let FeedbackMessage = FeedbackMessageFactory.encode(FeedbackMessageRequest).finish();
+
+        tcpClient.write(FeedbackMessage)
+        
+        
+        
+        break;
+  }
+
+
+
+
+
 })
+
 
