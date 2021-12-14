@@ -1,43 +1,30 @@
 // CLIENTE
-import readline from 'readline'
+
+// Importações
+import readline from "readline";
+import chalk from "chalk";
+import dgram from "dgram";
+import { Buffer } from "buffer";
+
+// Configurações
 const terminal = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
+  input: process.stdin,
+  output: process.stdout,
+});
 
-import dgram from 'dgram';
-import { Buffer } from 'buffer';
+const client = dgram.createSocket("udp4");
 
-const client = dgram.createSocket('udp4');
-const server = dgram.createSocket('udp4');
+// Eventos
+terminal.on("line", (op) => {
+  console.log(chalk.yellow("Operação:\t".concat(op)));
+  const message = Buffer.from(op);
+  client.send(message, 6060, "0.0.0.0", (err) => {});
+});
 
+client.on("message", (msg) => {
+  console.log(chalk.green("Resultado:\t".concat(msg.toString())));
+});
 
-
-terminal.question(`Insira sua operação: `, op => {
-    const message = Buffer.from(op)
-    
-    client.send(message, 8080, '0.0.0.0', (err) => {
-        client.close()
-    });
-
-    terminal.close()
-})
-
-
-server.on('message', (msg, rinfo) => {
-    console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
-
-  });
-
-
-  
-  server.on('listening', () => {
-    const address = server.address();
-    console.log(address)
-  });
-  
-server.bind(7070)
-client.bind(6060)
-  
-
-
+client.on("listening", () => {
+  const address = client.address();
+});
