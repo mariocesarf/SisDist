@@ -4,13 +4,14 @@
 let net = require("net");
 let chalk = require("chalk");
 let readline = require("readline");
+
+// Configurações
 let connectionParams = {
   ip: "",
   port: "",
   nickname: "",
 };
 
-// Configurações
 const terminal = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
