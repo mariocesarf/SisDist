@@ -38,7 +38,7 @@ export const calcular = (operation) => {
       //return result;
       break;
   }
-  if(typeof(result)==Number){
+  if(typeof(result)=="number"){
   return result.toFixed(2).toString();
   }else{
     return result;
